@@ -1,1 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Stock Prediction</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+
+        body{
+            background: linear-gradient(to right, #141e30, #243b55);
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+
+        .main-container{
+            width: 90%;
+            max-width: 1200px;
+            margin: auto;
+            margin-top: 40px;
+            margin-bottom: 40px;
+        }
+
+        .title{
+            text-align: center;
+            font-size: 45px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            color: #00ffd5;
+        }
+
+        .search-box{
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 20px;
+        }
+
+        .form-control{
+            height: 55px;
+            border-radius: 12px;
+            font-size: 18px;
+        }
+
+        .btn-custom{
+            width: 100%;
+            height: 55px;
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: bold;
+            background: #00ffd5;
+            border: none;
+            color: black;
+        }
+
+        .btn-custom:hover{
+            background: #00c3ff;
+        }
+
+        .info-card, .graph-card, .prediction-card{
+            margin-top: 30px;
+            background: rgba(255,255,255,0.1);
+            padding: 25px;
+            border-radius: 20px;
+        }
+
+        .info-title{
+            color: #00ffd5;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .info-text{
+            font-size: 20px;
+        }
+
+        img{
+            width: 100%;
+            border-radius: 15px;
+        }
+
+        .buy{
+            color: #00ff88;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .sell{
+            color: #ff4d4d;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="main-container">
+
+    <h1 class="title">📈 AI Stock Price Prediction</h1>
+
+    <!-- SEARCH BOX -->
+    <div class="search-box">
+
+        <form method="POST" action="/predict">
+
+            <div class="row">
+
+                <div class="col-md-9 mb-3">
+
+                    <input type="text"
+                           name="ticker"
+                           class="form-control"
+                           placeholder="Enter Stock Ticker (Example: RELIANCE.NS)"
+                           required>
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <button class="btn btn-custom">Predict</button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <!-- ERROR -->
+    {% if error %}
+        <div class="info-card">
+            <h3 style="color:red;">{{ error }}</h3>
+        </div>
+    {% endif %}
+
+    <!-- STOCK INFO -->
+    {% if company_name %}
+
+    <div class="info-card">
+
+        <h2 class="info-title">📊 Stock Information</h2>
+
+        <div class="row">
+
+            <div class="col-md-6">
+                <p class="info-text"><b>🏢 Company:</b> {{ company_name }}</p>
+                <p class="info-text"><b>💹 Sector:</b> {{ sector }}</p>
+                <p class="info-text"><b>💰 Market Cap:</b> {{ market_cap }}</p>
+            </div>
+
+            <div class="col-md-6">
+                <p class="info-text"><b>📈 Current Price:</b> ₹ {{ current_price }}</p>
+                <p class="info-text"><b>📊 MAE:</b> {{ mae }}</p>
+                <p class="info-text"><b>📊 RMSE:</b> {{ rmse }}</p>
+
+                {% if signal %}
+                    <p class="{% if 'BUY' in signal %}buy{% else %}sell{% endif %}">
+                        🟢 Signal: {{ signal }}
+                    </p>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+    <!-- PREDICTION -->
+    {% if predicted_price %}
+
+    <div class="prediction-card">
+
+        <h2 class="info-title">🤖 ML Prediction</h2>
+
+        <h3>📌 Predicted Next Day Price: ₹ {{ predicted_price }}</h3>
+
+    </div>
+
+    {% endif %}
+
+    <!-- EMA 1 -->
+    {% if plot1 %}
+
+    <div class="graph-card">
+
+        <h2 class="info-title">📉 EMA 20 & 50</h2>
+        <img src="{{ plot1 }}">
+
+    </div>
+
+    {% endif %}
+
+    <!-- EMA 2 -->
+    {% if plot2 %}
+
+    <div class="graph-card">
+
+        <h2 class="info-title">📊 EMA 100 & 200</h2>
+        <img src="{{ plot2 }}">
+
+    </div>
+
+    {% endif %}
+
+    <!-- PREDICTION GRAPH -->
+    {% if plot3 %}
+
+    <div class="graph-card">
+
+        <h2 class="info-title">📈 Prediction vs Actual</h2>
+        <img src="{{ plot3 }}">
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>
